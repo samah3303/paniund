@@ -105,31 +105,33 @@ function CompleteProfileContent() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-nordic-bg px-4 py-12 selection:bg-nordic-secondary selection:text-nordic-text">
+    <div className="h-[100dvh] max-h-[100dvh] overflow-y-auto overflow-x-hidden [-webkit-overflow-scrolling:touch] bg-white md:bg-nordic-bg md:min-h-screen md:h-auto flex flex-col items-center justify-between md:justify-center px-4 sm:px-8 md:px-4 py-4 md:py-12 selection:bg-nordic-secondary selection:text-nordic-text pt-[max(16px,env(safe-area-inset-top,16px))] pb-28 md:pb-12">
       {/* Brand Header */}
-      <Logo size="lg" theme="on-light" subtitle="Career Target Configuration" className="mb-8" />
+      <div className="w-full max-w-2xl flex items-center justify-between mb-4 md:mb-8">
+        <Logo size="md" theme="on-light" subtitle="Career Target Configuration" />
+      </div>
 
-      <div className="w-full max-w-2xl bg-white border border-nordic-border rounded-[4px] shadow-sm overflow-hidden">
-        {/* Accent Bar */}
-        <div className="h-1.5 bg-nordic-primary w-full" />
+      <div className="w-full max-w-2xl bg-transparent md:bg-white border-0 md:border md:border-nordic-border rounded-none md:rounded-[4px] shadow-none md:shadow-sm overflow-hidden flex-1 md:flex-initial flex flex-col">
+        {/* Accent Bar (Desktop only) */}
+        <div className="hidden md:block h-1.5 bg-nordic-primary w-full" />
 
-        <div className="p-8">
-          <div className="mb-6">
+        <div className="py-2 md:p-8 flex-1">
+          <div className="mb-5 md:mb-6">
             <h1 className="text-2xl font-bold text-nordic-text tracking-tight">
               Calibrate Career Targets
             </h1>
-            <p className="text-sm text-nordic-text-secondary mt-1">
+            <p className="text-xs sm:text-sm text-nordic-text-secondary mt-1">
               These preferences configure the ATS matching engine and keyword alignment metrics.
             </p>
           </div>
 
           {error && (
-            <div className="mb-6 border border-nordic-error bg-nordic-error/10 text-nordic-error p-3 rounded-[4px] text-xs font-semibold">
+            <div className="mb-6 border border-nordic-error bg-nordic-error/10 text-nordic-error p-3.5 rounded-xl md:rounded-[4px] text-xs font-semibold">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form id="onboarding-form" onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-nordic-text uppercase tracking-wide mb-1.5">
@@ -141,7 +143,7 @@ function CompleteProfileContent() {
                   value={targetRole}
                   onChange={(e) => setTargetRole(e.target.value)}
                   placeholder="e.g. Lead Software Engineer"
-                  className="w-full h-11 px-3.5 bg-white border border-nordic-border rounded-[4px] text-sm text-nordic-text placeholder-nordic-neutral focus:outline-none focus:border-nordic-primary focus:ring-2 focus:ring-nordic-primary/15 transition-all"
+                  className="w-full h-12 md:h-11 px-4 bg-white border border-nordic-border rounded-xl md:rounded-[4px] text-base md:text-sm text-nordic-text placeholder-nordic-neutral focus:outline-none focus:border-nordic-primary focus:ring-2 focus:ring-nordic-primary/15 transition-all"
                 />
               </div>
 
@@ -154,7 +156,7 @@ function CompleteProfileContent() {
                   value={targetIndustry}
                   onChange={(e) => setTargetIndustry(e.target.value)}
                   placeholder="e.g. Cloud Computing / SaaS"
-                  className="w-full h-11 px-3.5 bg-white border border-nordic-border rounded-[4px] text-sm text-nordic-text placeholder-nordic-neutral focus:outline-none focus:border-nordic-primary focus:ring-2 focus:ring-nordic-primary/15 transition-all"
+                  className="w-full h-12 md:h-11 px-4 bg-white border border-nordic-border rounded-xl md:rounded-[4px] text-base md:text-sm text-nordic-text placeholder-nordic-neutral focus:outline-none focus:border-nordic-primary focus:ring-2 focus:ring-nordic-primary/15 transition-all"
                 />
               </div>
             </div>
@@ -167,7 +169,7 @@ function CompleteProfileContent() {
                 <select
                   value={targetCompanyTier}
                   onChange={(e) => setTargetCompanyTier(e.target.value)}
-                  className="w-full h-11 px-3 bg-white border border-nordic-border rounded-[4px] text-sm text-nordic-text focus:outline-none focus:border-nordic-primary focus:ring-2 focus:ring-nordic-primary/15 transition-all"
+                  className="w-full h-12 md:h-11 px-3 bg-white border border-nordic-border rounded-xl md:rounded-[4px] text-base md:text-sm text-nordic-text focus:outline-none focus:border-nordic-primary focus:ring-2 focus:ring-nordic-primary/15 transition-all"
                 >
                   <option value="Tier 1 Tech">Tier 1 Tech / FAANG</option>
                   <option value="Unicorn / High-Growth">High-Growth Unicorn</option>
@@ -185,7 +187,7 @@ function CompleteProfileContent() {
                   value={minSalary}
                   onChange={(e) => setMinSalary(e.target.value)}
                   placeholder="140000"
-                  className="w-full h-11 px-3.5 bg-white border border-nordic-border rounded-[4px] text-sm font-mono text-nordic-text placeholder-nordic-neutral focus:outline-none focus:border-nordic-primary focus:ring-2 focus:ring-nordic-primary/15 transition-all"
+                  className="w-full h-12 md:h-11 px-4 bg-white border border-nordic-border rounded-xl md:rounded-[4px] text-base md:text-sm font-mono text-nordic-text placeholder-nordic-neutral focus:outline-none focus:border-nordic-primary focus:ring-2 focus:ring-nordic-primary/15 transition-all"
                 />
               </div>
 
@@ -198,7 +200,7 @@ function CompleteProfileContent() {
                   value={maxSalary}
                   onChange={(e) => setMaxSalary(e.target.value)}
                   placeholder="220000"
-                  className="w-full h-11 px-3.5 bg-white border border-nordic-border rounded-[4px] text-sm font-mono text-nordic-text placeholder-nordic-neutral focus:outline-none focus:border-nordic-primary focus:ring-2 focus:ring-nordic-primary/15 transition-all"
+                  className="w-full h-12 md:h-11 px-4 bg-white border border-nordic-border rounded-xl md:rounded-[4px] text-base md:text-sm font-mono text-nordic-text placeholder-nordic-neutral focus:outline-none focus:border-nordic-primary focus:ring-2 focus:ring-nordic-primary/15 transition-all"
                 />
               </div>
             </div>
@@ -219,19 +221,19 @@ function CompleteProfileContent() {
                       addSkill();
                     }
                   }}
-                  placeholder="Add skill (e.g. Next.js, Distributed Systems, Docker)"
-                  className="flex-1 h-11 px-3.5 bg-white border border-nordic-border rounded-[4px] text-sm text-nordic-text placeholder-nordic-neutral focus:outline-none focus:border-nordic-primary focus:ring-2 focus:ring-nordic-primary/15 transition-all"
+                  placeholder="Add skill (e.g. Next.js, Docker)"
+                  className="flex-1 h-12 md:h-11 px-4 bg-white border border-nordic-border rounded-xl md:rounded-[4px] text-base md:text-sm text-nordic-text placeholder-nordic-neutral focus:outline-none focus:border-nordic-primary focus:ring-2 focus:ring-nordic-primary/15 transition-all"
                 />
                 <button
                   type="button"
                   onClick={addSkill}
-                  className="nordic-btn-yellow h-11 px-4 text-xs font-bold uppercase tracking-wide cursor-pointer"
+                  className="nordic-btn-yellow h-12 md:h-11 px-4 rounded-xl md:rounded-[4px] text-xs font-bold uppercase tracking-wide cursor-pointer tap-active shrink-0"
                 >
                   Add Skill
                 </button>
               </div>
 
-              <div className="flex flex-wrap gap-2 min-h-12 border border-nordic-border p-3 rounded-[4px] bg-nordic-bg">
+              <div className="flex flex-wrap gap-2 min-h-12 border border-nordic-border p-3 rounded-xl md:rounded-[4px] bg-nordic-bg">
                 {skills.length === 0 ? (
                   <span className="text-xs text-nordic-neutral self-center">
                     No custom keywords added yet. Type a skill above and press Enter.
@@ -246,7 +248,7 @@ function CompleteProfileContent() {
                       <button
                         type="button"
                         onClick={() => removeSkill(skill)}
-                        className="text-nordic-neutral hover:text-nordic-error font-bold cursor-pointer ml-1"
+                        className="text-nordic-neutral hover:text-nordic-error font-bold cursor-pointer ml-1 p-1"
                       >
                         ×
                       </button>
@@ -256,10 +258,11 @@ function CompleteProfileContent() {
               </div>
             </div>
 
+            {/* Desktop Submit Button */}
             <button
               type="submit"
               disabled={saving}
-              className="nordic-btn-primary w-full h-11 text-sm font-bold tracking-wide mt-2 cursor-pointer disabled:opacity-50"
+              className="hidden md:inline-flex nordic-btn-primary w-full h-11 text-sm font-bold tracking-wide mt-2 cursor-pointer disabled:opacity-50"
             >
               {saving ? "Saving preferences..." : "Launch Application Workspace"}
             </button>
@@ -270,6 +273,18 @@ function CompleteProfileContent() {
           <span>Step 2 of 2</span>
           <span className="font-semibold text-nordic-primary">Calibration</span>
         </div>
+      </div>
+
+      {/* Mobile Sticky Save Action Bar */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 p-3 bg-white/95 backdrop-blur-md border-t border-nordic-border z-40 pb-[max(12px,env(safe-area-inset-bottom,12px))] shadow-lg">
+        <button
+          type="submit"
+          form="onboarding-form"
+          disabled={saving}
+          className="nordic-btn-primary w-full h-12 rounded-xl text-sm font-bold tracking-wide cursor-pointer disabled:opacity-50 tap-active shadow-md"
+        >
+          {saving ? "Saving preferences..." : "Launch Application Workspace →"}
+        </button>
       </div>
     </div>
   );

@@ -104,36 +104,40 @@ export default function ForgotPasswordForm() {
           </div>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-bold text-nordic-text uppercase tracking-wide mb-1.5">
-              Email Address
-            </label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="candidate@example.com"
-              className="w-full h-11 px-3.5 bg-white border border-nordic-border rounded-[4px] text-sm text-nordic-text placeholder-nordic-neutral focus:outline-none focus:border-nordic-primary focus:ring-2 focus:ring-nordic-primary/15 transition-all"
-            />
+        <form onSubmit={handleSubmit} className="flex-1 flex flex-col justify-between space-y-4">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-nordic-text uppercase tracking-wide mb-1.5">
+                Email Address
+              </label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="candidate@example.com"
+                className="w-full h-12 md:h-11 px-4 bg-white border border-nordic-border rounded-xl md:rounded-[4px] text-base md:text-sm text-nordic-text placeholder-nordic-neutral focus:outline-none focus:border-nordic-primary focus:ring-2 focus:ring-nordic-primary/15 transition-all"
+              />
+            </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="nordic-btn-primary w-full h-11 text-sm font-bold tracking-wide mt-2 cursor-pointer disabled:opacity-50 tap-active"
-          >
-            {loading ? "Sending..." : "Send Reset Link"}
-          </button>
-
-          <div className="text-center pt-3 border-t border-nordic-border mt-4">
-            <Link
-              href="/login"
-              className="text-xs text-nordic-primary font-semibold hover:underline"
+          <div className="pt-2 space-y-3 mt-auto">
+            <button
+              type="submit"
+              disabled={loading}
+              className="nordic-btn-primary w-full h-12 md:h-11 rounded-xl md:rounded-[4px] text-sm font-bold tracking-wide cursor-pointer disabled:opacity-50 tap-active shadow-sm"
             >
-              ← Back to Sign In
-            </Link>
+              {loading ? "Sending..." : "Send Reset Link"}
+            </button>
+
+            <div className="text-center pt-3 border-t border-nordic-border">
+              <Link
+                href="/login"
+                className="text-xs text-nordic-primary font-semibold hover:underline"
+              >
+                ← Back to Sign In
+              </Link>
+            </div>
           </div>
         </form>
       )}

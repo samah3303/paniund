@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import Logo from "@/components/Logo";
+import MobileTopBar from "./MobileTopBar";
 
 interface DashboardHeaderProps {
   user?: {
@@ -84,7 +85,12 @@ export default function DashboardHeader({ user }: DashboardHeaderProps) {
   const isAdmin = user?.role === "admin" || user?.email === "demo@paniund.com";
 
   return (
-    <header className="hidden md:block sticky top-0 z-40 bg-nordic-primary text-white shadow-sm" role="banner">
+    <>
+      {/* Native Mobile 56px Sticky Top App Bar */}
+      <MobileTopBar user={user} />
+
+      {/* Desktop Header */}
+      <header className="hidden md:block sticky top-0 z-40 bg-nordic-primary text-white shadow-sm" role="banner">
       <div className="flex h-13 sm:h-[60px] items-center justify-between px-3.5 sm:px-8 max-w-[1400px] mx-auto w-full">
         {/* Logo Left */}
         <div className="flex items-center gap-4 sm:gap-6">
@@ -199,5 +205,6 @@ export default function DashboardHeader({ user }: DashboardHeaderProps) {
         </div>
       </nav>
     </header>
+    </>
   );
 }

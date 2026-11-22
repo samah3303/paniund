@@ -21,14 +21,14 @@ export default async function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-nordic-bg text-nordic-text font-sans antialiased selection:bg-nordic-secondary selection:text-nordic-text">
-      {/* ===================== NAVBAR (60px) ===================== */}
-      <header className="sticky top-0 z-50 bg-nordic-primary text-white shadow-xs">
-        <div className="mx-auto flex h-[60px] max-w-[1200px] items-center justify-between px-4 sm:px-6">
+    <div className="min-h-screen bg-nordic-bg text-nordic-text font-sans antialiased selection:bg-nordic-secondary selection:text-nordic-text overflow-x-hidden">
+      {/* ===================== NAVBAR ===================== */}
+      <header className="sticky top-0 z-50 bg-nordic-primary text-white shadow-xs pt-[env(safe-area-inset-top,0px)] select-none">
+        <div className="mx-auto flex h-14 sm:h-[60px] max-w-[1200px] items-center justify-between px-3.5 sm:px-6">
           {/* Logo Left */}
-          <Logo theme="on-blue" size="md" href="/" />
+          <Logo theme="on-blue" size="sm" href="/" />
 
-          {/* Simple Navigation Links */}
+          {/* Simple Navigation Links (Desktop) */}
           <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-white/90">
             <a href="#preview" className="hover:text-nordic-secondary transition-colors py-1">
               Preview
@@ -45,24 +45,24 @@ export default async function Home() {
           </nav>
 
           {/* Action CTAs */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Link
               href="/login"
-              className="text-xs font-bold uppercase tracking-wider text-white hover:text-nordic-secondary transition-colors px-2 py-1"
+              className="text-xs font-bold uppercase tracking-wider text-white hover:text-nordic-secondary transition-colors px-2 py-1.5 tap-active"
             >
               Sign In
             </Link>
             <Link
               href="/register"
-              className="hidden sm:inline-flex text-xs font-bold uppercase tracking-wider text-white hover:text-nordic-secondary transition-colors px-2 py-1"
+              className="hidden sm:inline-flex text-xs font-bold uppercase tracking-wider text-white hover:text-nordic-secondary transition-colors px-2 py-1.5 tap-active"
             >
               Create Profile
             </Link>
             <a
               href="#dropzone"
-              className="nordic-btn-yellow h-9 px-4 text-xs font-bold uppercase tracking-wide flex items-center justify-center cursor-pointer"
+              className="nordic-btn-yellow h-9 px-3.5 sm:px-4 rounded-lg sm:rounded-[4px] text-xs font-bold uppercase tracking-wide flex items-center justify-center cursor-pointer tap-active shadow-xs"
             >
-              Upload Resume
+              Upload
             </a>
           </div>
         </div>

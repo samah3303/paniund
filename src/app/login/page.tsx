@@ -35,21 +35,31 @@ export default async function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-nordic-bg px-4 py-12 selection:bg-nordic-secondary selection:text-nordic-text font-sans">
-      {/* Brand Header */}
-      <Logo size="lg" theme="on-light" className="mb-8" />
+    <div className="h-[100dvh] max-h-[100dvh] overflow-y-auto overflow-x-hidden [-webkit-overflow-scrolling:touch] bg-white md:bg-nordic-bg md:min-h-screen md:h-auto flex flex-col items-center justify-between md:justify-center px-5 sm:px-8 md:px-4 py-4 md:py-12 selection:bg-nordic-secondary selection:text-nordic-text font-sans pt-[max(20px,env(safe-area-inset-top,20px))] pb-[max(20px,env(safe-area-inset-bottom,20px))]">
+      {/* Top Mobile Bar / Desktop Logo */}
+      <div className="w-full max-w-md flex items-center justify-between mb-4 md:mb-8">
+        <Link href="/" className="tap-active">
+          <Logo size="md" theme="on-light" />
+        </Link>
+        <Link
+          href="/"
+          className="md:hidden text-xs font-semibold text-nordic-text-secondary hover:text-nordic-primary p-2 tap-active"
+        >
+          Cancel
+        </Link>
+      </div>
 
-      {/* Login Card */}
-      <div className="w-full max-w-md bg-white border border-nordic-border rounded-[4px] shadow-sm overflow-hidden">
-        {/* Top Brand Accent Bar */}
-        <div className="h-1.5 bg-nordic-primary w-full" />
+      {/* Login Card on Desktop / Edge-to-Edge Container on Mobile */}
+      <div className="w-full max-w-md flex-1 flex flex-col justify-between md:flex-initial md:bg-white md:border md:border-nordic-border md:rounded-[4px] md:shadow-sm overflow-hidden">
+        {/* Top Brand Accent Bar (Desktop only) */}
+        <div className="hidden md:block h-1.5 bg-nordic-primary w-full" />
 
-        <div className="p-8">
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-nordic-text tracking-tight">
+        <div className="py-2 md:p-8 flex-1 flex flex-col justify-between">
+          <div className="mb-5 md:mb-6">
+            <h1 className="text-2xl sm:text-2xl md:text-2xl font-bold text-nordic-text tracking-tight">
               Sign In
             </h1>
-            <p className="text-sm text-nordic-text-secondary mt-1">
+            <p className="text-xs sm:text-sm text-nordic-text-secondary mt-1">
               Sign in to view your resume score, matched jobs, and applications.
             </p>
           </div>
@@ -59,8 +69,8 @@ export default async function LoginPage() {
           </Suspense>
         </div>
 
-        {/* Card Footer: No Account Help */}
-        <div className="px-8 py-4 bg-nordic-bg border-t border-nordic-border text-center text-xs text-nordic-text-secondary">
+        {/* Card Footer: No Account Help (Desktop Only) */}
+        <div className="hidden md:block px-8 py-4 bg-nordic-bg border-t border-nordic-border text-center text-xs text-nordic-text-secondary">
           Don&apos;t have an account?{" "}
           <Link
             href="/#dropzone"
@@ -72,8 +82,8 @@ export default async function LoginPage() {
         </div>
       </div>
 
-      {/* Support / Help Links */}
-      <div className="mt-8 flex items-center gap-4 text-xs text-nordic-neutral font-medium">
+      {/* Support / Help Links (Desktop Only) */}
+      <div className="hidden md:flex mt-8 items-center gap-4 text-xs text-nordic-neutral font-medium">
         <Link href="/" className="hover:text-nordic-primary transition-colors">
           ← Back to Overview
         </Link>

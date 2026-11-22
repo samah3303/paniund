@@ -11,17 +11,17 @@ export default function PrivacyPolicyPage() {
   return (
     <div className="min-h-screen bg-nordic-bg text-nordic-text font-sans antialiased selection:bg-nordic-secondary selection:text-nordic-text">
       {/* Top Navigation */}
-      <header className="sticky top-0 z-50 bg-nordic-primary text-white shadow-xs">
-        <div className="mx-auto flex h-[60px] max-w-[1000px] items-center justify-between px-4 sm:px-6">
-          <Logo theme="on-blue" size="md" href="/" />
+      <header className="sticky top-0 z-50 bg-nordic-primary text-white shadow-xs pt-[env(safe-area-inset-top,0px)]">
+        <div className="mx-auto flex h-14 sm:h-[60px] max-w-[1000px] items-center justify-between px-4 sm:px-6">
+          <Logo theme="on-blue" size="sm" href="/" />
 
-          <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-wider">
-            <Link href="/" className="hover:text-nordic-secondary transition-colors">
-              &larr; Back to Home
+          <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-wider">
+            <Link href="/" className="hover:text-nordic-secondary transition-colors tap-active">
+              &larr; Back
             </Link>
             <Link
               href="/login"
-              className="nordic-btn-yellow h-8 px-3.5 inline-flex items-center text-xs font-bold"
+              className="nordic-btn-yellow h-8 px-3.5 inline-flex items-center text-xs font-bold rounded-lg sm:rounded-[4px] tap-active"
             >
               Sign In
             </Link>

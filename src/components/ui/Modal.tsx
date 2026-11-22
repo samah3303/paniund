@@ -102,7 +102,7 @@ export default function Modal({
 
   return (
     <div
-      className="fixed inset-0 z-[60] bg-nordic-text/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto animate-in fade-in duration-150"
+      className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-hidden animate-in fade-in duration-200"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           onClose();
@@ -115,46 +115,49 @@ export default function Modal({
         aria-modal="true"
         aria-labelledby={titleId.current}
         tabIndex={-1}
-        className={`w-full ${maxWidthClass} bg-white border-t sm:border border-nordic-border rounded-t-2xl sm:rounded-[8px] shadow-2xl max-h-[92vh] sm:max-h-[90vh] flex flex-col overflow-hidden outline-none`}
+        className={`w-full ${maxWidthClass} bg-white border-t sm:border border-nordic-border rounded-t-2xl sm:rounded-[8px] shadow-2xl max-h-[90dvh] sm:max-h-[90vh] flex flex-col overflow-hidden outline-none animate-sheet-slide-up sm:animate-none`}
       >
-        {/* Modal Header */}
-        <div className="bg-nordic-primary text-white p-4 sm:p-5 flex flex-col rounded-t-2xl sm:rounded-t-[8px] shrink-0">
-          {/* Mobile Bottom Sheet Pull Bar */}
-          <div
-            className="w-12 h-1.5 bg-white/40 rounded-full mx-auto mb-2.5 sm:hidden"
-            aria-hidden="true"
-          />
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-3">
-              {headerBadge}
-              <div>
-                <h2
-                  id={titleId.current}
-                  className="text-sm sm:text-base font-bold tracking-tight text-white leading-tight"
-                >
-                  {title}
-                </h2>
-                {subtitle && (
-                  <p className="text-[11px] sm:text-xs text-white/80 mt-0.5 line-clamp-1">
-                    {subtitle}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Close dialog"
-              className="touch-target w-10 h-10 -mr-2 rounded-[4px] bg-nordic-primary-hover hover:bg-nordic-secondary hover:text-nordic-text text-white font-bold text-base transition-colors cursor-pointer tap-active flex items-center justify-center"
-            >
-              ×
-            </button>
-          </div>
+        {/* Bottom Sheet Drag Handle Bar on Mobile */}
+        <div
+          className="w-full flex items-center justify-center pt-2.5 pb-1 sm:hidden bg-nordic-primary cursor-grab active:cursor-grabbing"
+          aria-hidden="true"
+        >
+          <div className="w-12 h-1.5 bg-white/40 rounded-full" />
         </div>
 
-        {/* Modal Content */}
-        <div className="flex-1 overflow-y-auto">{children}</div>
+        {/* Modal Header */}
+        <div className="bg-nordic-primary text-white px-4 py-3 sm:p-5 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-3">
+            {headerBadge}
+            <div>
+              <h2
+                id={titleId.current}
+                className="text-base sm:text-base font-bold tracking-tight text-white leading-tight"
+              >
+                {title}
+              </h2>
+              {subtitle && (
+                <p className="text-xs text-white/80 mt-0.5 line-clamp-1">
+                  {subtitle}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close dialog"
+            className="w-11 h-11 -mr-2 rounded-[6px] hover:bg-white/10 active:bg-white/20 text-white font-bold text-xl transition-colors cursor-pointer tap-active flex items-center justify-center shrink-0"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Modal Content with Safe Area Bottom Padding on Mobile */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 pb-[max(20px,env(safe-area-inset-bottom,20px))]">
+          {children}
+        </div>
       </div>
     </div>
   );

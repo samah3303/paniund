@@ -104,20 +104,20 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   ];
 
   return (
-    <div className="min-h-screen bg-nordic-bg text-nordic-text flex flex-col font-sans selection:bg-nordic-secondary selection:text-nordic-text">
+    <div className="h-[100dvh] max-h-[100dvh] overflow-hidden overscroll-none flex flex-col md:h-auto md:min-h-screen md:overflow-visible md:overscroll-auto bg-nordic-bg text-nordic-text font-sans selection:bg-nordic-secondary selection:text-nordic-text">
       {/* Skip to Main Content Link (WCAG 2.1 AA 2.4.1 Bypass Blocks) */}
       <a href="#admin-main-content" className="skip-link">
         Skip to main content
       </a>
 
       {/* ==================== ADMIN TOP BAR ==================== */}
-      <header className="sticky top-0 z-40 bg-nordic-text text-white shadow-sm border-b border-white/10" role="banner">
-        <div className="flex h-13 sm:h-[60px] items-center justify-between px-3.5 sm:px-8 max-w-[1400px] mx-auto w-full">
+      <header className="sticky top-0 z-40 bg-nordic-text text-white shadow-sm border-b border-white/10 shrink-0 pt-[env(safe-area-inset-top,0px)] select-none" role="banner">
+        <div className="flex h-14 sm:h-[60px] items-center justify-between px-3.5 sm:px-8 max-w-[1400px] mx-auto w-full">
           {/* Logo & Admin Badge */}
-          <div className="flex items-center gap-3 sm:gap-4">
-            <Logo theme="on-blue" href="/admin" />
+          <div className="flex items-center gap-2.5 sm:gap-4">
+            <Logo theme="on-blue" size="sm" href="/admin" />
             <span className="px-2 py-0.5 bg-nordic-secondary text-nordic-text text-[10px] font-bold rounded-[2px] uppercase tracking-wider">
-              Admin Portal
+              Admin
             </span>
           </div>
 
@@ -126,18 +126,19 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
             <Link
               href="/dashboard"
               aria-label="Return to candidate dashboard"
-              className="text-xs font-bold text-white/90 hover:text-nordic-secondary px-2.5 py-1.5 rounded-[4px] border border-white/20 transition-colors flex items-center gap-1.5 tap-active touch-target"
+              className="text-xs font-bold text-white/90 hover:text-nordic-secondary px-2.5 py-1.5 rounded-[4px] border border-white/20 transition-colors flex items-center gap-1.5 tap-active"
             >
               <span aria-hidden="true">←</span>
               <span className="hidden sm:inline">Candidate View</span>
+              <span className="sm:hidden text-[11px]">App</span>
             </Link>
 
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
               aria-label="Sign out of admin portal"
-              className="h-9 px-3 rounded-[4px] bg-nordic-error hover:bg-nordic-error/85 text-white text-xs font-bold transition-colors cursor-pointer tap-active touch-target flex items-center justify-center"
+              className="h-8 sm:h-9 px-2.5 sm:px-3 rounded-[4px] bg-nordic-error hover:bg-nordic-error/85 text-white text-xs font-bold transition-colors cursor-pointer tap-active flex items-center justify-center"
             >
-              Sign Out
+              Exit
             </button>
           </div>
         </div>
@@ -166,11 +167,11 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
         </nav>
       </header>
 
-      {/* Main Content Area */}
+      {/* Main Content Area (Smooth native touch scrolling) */}
       <main
         id="admin-main-content"
         tabIndex={-1}
-        className="flex-1 max-w-[1400px] w-full mx-auto px-3.5 py-4 sm:p-6 lg:p-8 pb-24 md:pb-8 outline-none"
+        className="flex-1 w-full mx-auto px-4 py-3.5 pb-24 md:max-w-[1400px] md:p-8 md:pb-8 outline-none overflow-y-auto overflow-x-hidden md:overflow-visible overscroll-y-contain [-webkit-overflow-scrolling:touch]"
       >
         {children}
       </main>
@@ -178,9 +179,9 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       {/* Mobile App Bottom Navigation Bar for Admin */}
       <nav
         aria-label="Admin mobile navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-nordic-border shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-safe"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-t border-nordic-border/80 shadow-[0_-4px_24px_rgba(0,0,0,0.08)] select-none pb-[max(8px,env(safe-area-inset-bottom,8px))]"
       >
-        <div className="grid grid-cols-4 h-15 max-w-md mx-auto">
+        <div className="grid grid-cols-4 h-14 max-w-md mx-auto px-2">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -188,17 +189,17 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                 key={item.href}
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
-                className={`flex flex-col items-center justify-center relative tap-active py-1 transition-all touch-target ${
-                  isActive ? "text-nordic-primary" : "text-nordic-neutral hover:text-nordic-text"
+                className={`flex flex-col items-center justify-center relative py-1 transition-all tap-active touch-target ${
+                  isActive ? "text-nordic-primary font-bold" : "text-nordic-text-secondary hover:text-nordic-text"
                 }`}
               >
                 {isActive && (
-                  <span className="absolute top-0 w-8 h-[3px] bg-nordic-primary rounded-b-full shadow-2xs" />
+                  <span className="absolute top-1 w-9 h-[3px] bg-nordic-primary rounded-full shadow-xs" />
                 )}
-                <div className={`transition-transform duration-150 ${isActive ? "scale-110" : ""}`}>
+                <div className={`transition-transform duration-150 ${isActive ? "scale-105" : "opacity-80"}`}>
                   {item.icon}
                 </div>
-                <span className={`text-[10px] mt-0.5 tracking-tight ${isActive ? "font-bold text-nordic-primary" : "font-medium"}`}>
+                <span className={`text-[10px] mt-0.5 tracking-tight ${isActive ? "font-bold text-nordic-primary" : "font-medium text-nordic-neutral"}`}>
                   {item.shortName}
                 </span>
               </Link>

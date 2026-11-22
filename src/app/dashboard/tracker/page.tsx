@@ -405,7 +405,7 @@ export default function ApplicationTrackerPage() {
                         draggable={true}
                         onDragStart={(e) => handleDragStart(e, app.id)}
                         onDragEnd={handleDragEnd}
-                        className={`border rounded-[4px] bg-white p-3 hover:border-nordic-primary transition-all duration-200 shadow-2xs group cursor-grab active:cursor-grabbing ${
+                        className={`border rounded-xl md:rounded-[4px] bg-white p-3.5 md:p-3 hover:border-nordic-primary transition-all duration-200 shadow-2xs group cursor-grab active:cursor-grabbing ${
                           draggingAppId === app.id
                             ? "opacity-40 scale-95 border-dashed border-nordic-primary"
                             : justDroppedAppId === app.id
@@ -423,58 +423,60 @@ export default function ApplicationTrackerPage() {
                             >
                               ⠿
                             </span>
-                            <span className="text-[11px] text-nordic-text-secondary uppercase tracking-wider truncate block font-bold">
+                            <span className="text-xs md:text-[11px] text-nordic-text-secondary uppercase tracking-wider truncate block font-bold">
                               {app.job?.company || "Company"}
                             </span>
                           </div>
                           {app.job?.matchScore !== null && (
-                            <span className="text-[10px] font-mono font-bold bg-nordic-primary text-white px-1.5 py-0.5 rounded-[2px] shrink-0">
+                            <span className="text-xs md:text-[10px] font-mono font-bold bg-nordic-primary text-white px-2 py-0.5 rounded-full md:rounded-[2px] shrink-0">
                               {app.job.matchScore}%
                             </span>
                           )}
                         </div>
 
-                        <h4 className="font-bold text-xs text-nordic-text line-clamp-1 mb-2">
+                        <h4 className="font-bold text-sm md:text-xs text-nordic-text line-clamp-1 mb-2">
                           {app.job?.title}
                         </h4>
 
                         {app.interviewDate && (
-                          <div className="text-[11px] text-nordic-primary font-semibold mb-2 flex items-center gap-1">
-                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                          <div className="text-xs md:text-[11px] text-nordic-primary font-semibold mb-2.5 flex items-center gap-1">
+                            <svg className="w-4 h-4 md:w-3.5 md:h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                             <span>{app.interviewDate}</span>
                           </div>
                         )}
 
-                        <div className="pt-2 border-t border-nordic-border flex items-center justify-between">
+                        <div className="pt-2.5 border-t border-nordic-border flex items-center justify-between gap-2">
                           <button
                             type="button"
                             onClick={() => openModal(app)}
                             aria-label={`Edit application notes for ${app.job?.title}`}
-                            className="text-[11px] font-bold text-nordic-primary hover:underline cursor-pointer touch-target min-w-[32px] min-h-[32px] flex items-center justify-center"
+                            className="text-xs font-bold text-nordic-primary hover:underline cursor-pointer min-h-[44px] md:min-h-[32px] px-2 flex items-center justify-center tap-active"
                           >
-                            Edit
+                            Edit Notes
                           </button>
 
-                          {/* Fallback stage selector for mobile */}
-                          <select
-                            value={app.status}
-                            aria-label={`Move stage for ${app.job?.title}`}
-                            onChange={(e) =>
-                              handleStatusChange(
-                                app.id,
-                                e.target.value as ApplicationStatus
-                              )
-                            }
-                            className="text-[10px] border border-nordic-border rounded-[2px] bg-white px-1 py-1 cursor-pointer font-semibold text-nordic-text focus:outline-none"
-                          >
-                            {APPLICATION_STATUSES.map((st) => (
-                              <option key={st.value} value={st.value}>
-                                → {st.label}
-                              </option>
-                            ))}
-                          </select>
+                          {/* Native stage selector for mobile */}
+                          <div className="relative">
+                            <select
+                              value={app.status}
+                              aria-label={`Move stage for ${app.job?.title}`}
+                              onChange={(e) =>
+                                handleStatusChange(
+                                  app.id,
+                                  e.target.value as ApplicationStatus
+                                )
+                              }
+                              className="min-h-[44px] md:min-h-[32px] text-xs border border-nordic-border rounded-lg md:rounded-[2px] bg-nordic-bg md:bg-white px-3 py-1.5 cursor-pointer font-bold text-nordic-text focus:outline-none tap-active"
+                            >
+                              {APPLICATION_STATUSES.map((st) => (
+                                <option key={st.value} value={st.value}>
+                                  → {st.label}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
                         </div>
                       </div>
                     ))

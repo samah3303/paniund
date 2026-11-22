@@ -194,7 +194,7 @@ export default function DropzoneCard() {
                       handleFile(pendingFile, manualEmail.trim());
                     }
                   }}
-                  className="space-y-2.5"
+                  className="space-y-3"
                 >
                   <input
                     type="email"
@@ -202,12 +202,12 @@ export default function DropzoneCard() {
                     value={manualEmail}
                     onChange={(e) => setManualEmail(e.target.value)}
                     placeholder="your.email@example.com"
-                    className="w-full h-10 px-3 bg-white border border-nordic-border rounded-[4px] text-xs text-nordic-text focus:outline-none focus:border-nordic-primary"
+                    className="w-full h-12 sm:h-10 px-3.5 bg-white border border-nordic-border rounded-xl sm:rounded-[4px] text-base sm:text-xs text-nordic-text focus:outline-none focus:border-nordic-primary"
                   />
                   <button
                     type="submit"
                     disabled={uploading}
-                    className="nordic-btn-yellow w-full h-10 text-xs font-bold uppercase tracking-wider cursor-pointer"
+                    className="nordic-btn-yellow w-full h-12 sm:h-10 rounded-xl sm:rounded-[4px] text-xs font-bold uppercase tracking-wider cursor-pointer tap-active shadow-xs"
                   >
                     {uploading ? "Analyzing..." : "Continue & View ATS Score →"}
                   </button>

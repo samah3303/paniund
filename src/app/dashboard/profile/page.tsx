@@ -106,7 +106,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6 font-sans">
+    <div className="space-y-4 sm:space-y-6 font-sans pb-36 md:pb-0">
       {/* Resume Banner & ATS Status */}
       <ResumeSection
         name={name}
@@ -211,12 +211,12 @@ export default function ProfilePage() {
           </div>
 
           {/* Mobile Sticky Save Bar */}
-          <div className="md:hidden fixed bottom-15 left-0 right-0 p-3 bg-white/95 backdrop-blur-md border-t border-nordic-border z-40 shadow-lg">
+          <div className="md:hidden fixed bottom-[calc(56px+max(8px,env(safe-area-inset-bottom,8px)))] left-0 right-0 p-3 bg-white/95 backdrop-blur-xl border-t border-nordic-border/80 z-40 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
             <button
               type="submit"
               disabled={saving}
               aria-busy={saving}
-              className="nordic-btn-primary w-full h-12 text-xs font-bold uppercase tracking-wider disabled:opacity-50 shadow-md tap-active cursor-pointer"
+              className="nordic-btn-primary w-full h-12 rounded-xl text-sm font-bold tracking-wide disabled:opacity-50 shadow-md tap-active cursor-pointer"
             >
               {saving ? "Saving Changes..." : "✓ Save Profile & Preferences"}
             </button>

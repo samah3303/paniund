@@ -30,12 +30,12 @@ export default function JobHeader({
   setActiveTab,
 }: JobHeaderProps) {
   return (
-    <div className="nordic-card p-4 sm:p-8">
+    <div className="nordic-card rounded-2xl sm:rounded-[4px] p-4.5 sm:p-8">
       {/* Top Breadcrumb */}
       <div className="flex items-center gap-2 text-xs text-nordic-neutral mb-3 sm:mb-4">
         <Link
           href="/dashboard/jobs"
-          className="hover:text-nordic-primary font-medium flex items-center gap-1"
+          className="hover:text-nordic-primary font-medium flex items-center gap-1 tap-active"
         >
           ← Back to Jobs
         </Link>
@@ -85,7 +85,7 @@ export default function JobHeader({
 
         <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 w-full md:w-auto mt-2 md:mt-0">
           {isApplied ? (
-            <div className="flex items-center gap-2 px-3.5 py-2 bg-nordic-success/10 border border-nordic-success/30 rounded-[4px] text-xs font-bold text-nordic-success">
+            <div className="flex items-center gap-2 px-3.5 py-2 bg-nordic-success/10 border border-nordic-success/30 rounded-xl sm:rounded-[4px] text-xs font-bold text-nordic-success">
               <span>✓ Applied</span>
               <Link
                 href="/dashboard/tracker"
@@ -98,14 +98,14 @@ export default function JobHeader({
             <button
               onClick={handleMarkApplied}
               disabled={markingApplied}
-              className="nordic-btn-primary h-10 sm:h-11 px-4 sm:px-5 text-xs font-bold uppercase tracking-wide cursor-pointer tap-active disabled:opacity-50"
+              className="nordic-btn-primary h-11 px-4 sm:px-5 rounded-xl sm:rounded-[4px] text-xs font-bold uppercase tracking-wide cursor-pointer tap-active disabled:opacity-50"
             >
               {markingApplied ? "Saving..." : "✓ Mark as Applied"}
             </button>
           )}
 
           {job.matchScore !== null && (
-            <div className="p-2 sm:p-3 bg-nordic-bg border border-nordic-border rounded-[4px] text-center min-w-[85px] sm:min-w-[100px]">
+            <div className="p-2 sm:p-3 bg-nordic-bg border border-nordic-border rounded-xl sm:rounded-[4px] text-center min-w-[85px] sm:min-w-[100px]">
               <span className="text-[9px] sm:text-[10px] text-nordic-neutral font-bold uppercase block">
                 Match Score
               </span>
@@ -120,39 +120,12 @@ export default function JobHeader({
         </div>
       </div>
 
-      {/* Tab Controls - Mobile Select & Scrollable Bar (Prevents overlapping on any screen width) */}
+      {/* Tab Controls - Native Horizontal Segmented Pill Bar */}
       <div className="pt-3 sm:pt-4">
-        {/* Mobile Dropdown Tool Selector */}
-        <div className="block sm:hidden mb-2">
-          <label htmlFor="mobile-job-tab-select" className="sr-only">
-            Select Tool
-          </label>
-          <div className="relative">
-            <select
-              id="mobile-job-tab-select"
-              value={activeTab}
-              onChange={(e) => setActiveTab(e.target.value as JobDetailTab)}
-              className="w-full h-10 px-3 pr-8 bg-nordic-bg border border-nordic-border rounded-[4px] text-xs font-bold uppercase tracking-wider text-nordic-primary focus:outline-none focus:border-nordic-primary appearance-none cursor-pointer"
-            >
-              {JOB_DETAIL_TABS.map((tab) => (
-                <option key={tab.key} value={tab.key}>
-                  {tab.label}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-nordic-primary">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        {/* Scrollable Horizontal Pill Tabs with shrink-0 (never overlaps or wraps text) */}
         <div
           role="tablist"
           aria-label="Job preparation tools"
-          className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 scrollbar-none scroll-smooth"
+          className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1"
         >
           {JOB_DETAIL_TABS.map((tab) => {
             const isActive = activeTab === tab.key;
@@ -165,7 +138,7 @@ export default function JobHeader({
                 aria-selected={isActive}
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
-                className={`h-9 sm:h-10 px-3 sm:px-4 rounded-[4px] text-[11px] sm:text-xs font-bold uppercase tracking-wide cursor-pointer transition-colors whitespace-nowrap shrink-0 touch-manipulation ${
+                className={`h-10 px-4 rounded-full sm:rounded-[4px] text-xs font-bold uppercase tracking-wide cursor-pointer transition-colors whitespace-nowrap shrink-0 tap-active ${
                   isActive
                     ? "bg-nordic-primary text-white shadow-xs"
                     : "bg-white text-nordic-text-secondary border border-nordic-border hover:bg-nordic-bg"

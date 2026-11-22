@@ -11,6 +11,7 @@ export default function ResetPasswordForm() {
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -77,22 +78,22 @@ export default function ResetPasswordForm() {
   }
 
   return (
-    <div className="w-full max-w-md bg-white border border-nordic-border rounded-[4px] shadow-sm overflow-hidden">
-      {/* Top Accent Bar */}
-      <div className="h-1.5 bg-nordic-secondary w-full" />
+    <div className="w-full max-w-md bg-transparent md:bg-white border-0 md:border md:border-nordic-border rounded-none md:rounded-[4px] shadow-none md:shadow-sm overflow-hidden flex-1 md:flex-initial flex flex-col justify-between">
+      {/* Top Accent Bar (Desktop only) */}
+      <div className="hidden md:block h-1.5 bg-nordic-secondary w-full" />
 
-      <div className="p-8">
-        <div className="mb-6">
+      <div className="py-2 md:p-8 flex-1 flex flex-col justify-between">
+        <div className="mb-5 md:mb-6">
           <h1 className="text-2xl font-bold text-nordic-text tracking-tight">
             Create New Password
           </h1>
-          <p className="text-sm text-nordic-text-secondary mt-1">
+          <p className="text-xs sm:text-sm text-nordic-text-secondary mt-1">
             Choose a strong password with at least 8 characters.
           </p>
         </div>
 
         {error && (
-          <div className="mb-6 border border-nordic-error bg-nordic-error/10 text-nordic-error p-3 rounded-[4px] text-xs font-semibold flex items-center gap-2">
+          <div className="mb-6 border border-nordic-error bg-nordic-error/10 text-nordic-error p-3 rounded-xl md:rounded-[4px] text-xs font-semibold flex items-center gap-2">
             <svg
               className="w-4 h-4 shrink-0"
               viewBox="0 0 24 24"
@@ -108,44 +109,67 @@ export default function ResetPasswordForm() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-bold text-nordic-text uppercase tracking-wide mb-1.5">
-              New Password
-            </label>
-            <input
-              type="password"
-              required
-              minLength={8}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 8 characters"
-              className="w-full h-11 px-3.5 bg-white border border-nordic-border rounded-[4px] text-sm text-nordic-text placeholder-nordic-neutral focus:outline-none focus:border-nordic-primary focus:ring-2 focus:ring-nordic-primary/15 transition-all"
-            />
+        <form onSubmit={handleSubmit} className="flex-1 flex flex-col justify-between space-y-4">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-nordic-text uppercase tracking-wide mb-1.5">
+                New Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  minLength={8}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="At least 8 characters"
+                  className="w-full h-12 md:h-11 pl-4 pr-12 bg-white border border-nordic-border rounded-xl md:rounded-[4px] text-base md:text-sm text-nordic-text placeholder-nordic-neutral focus:outline-none focus:border-nordic-primary focus:ring-2 focus:ring-nordic-primary/15 transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  className="absolute right-1 top-1 bottom-1 w-10 flex items-center justify-center text-nordic-neutral hover:text-nordic-text tap-active cursor-pointer"
+                >
+                  {showPassword ? (
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-nordic-text uppercase tracking-wide mb-1.5">
+                Confirm New Password
+              </label>
+              <input
+                type={showPassword ? "text" : "password"}
+                required
+                minLength={8}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Re-type new password"
+                className="w-full h-12 md:h-11 px-4 bg-white border border-nordic-border rounded-xl md:rounded-[4px] text-base md:text-sm text-nordic-text placeholder-nordic-neutral focus:outline-none focus:border-nordic-primary focus:ring-2 focus:ring-nordic-primary/15 transition-all"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-bold text-nordic-text uppercase tracking-wide mb-1.5">
-              Confirm New Password
-            </label>
-            <input
-              type="password"
-              required
-              minLength={8}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Re-type new password"
-              className="w-full h-11 px-3.5 bg-white border border-nordic-border rounded-[4px] text-sm text-nordic-text placeholder-nordic-neutral focus:outline-none focus:border-nordic-primary focus:ring-2 focus:ring-nordic-primary/15 transition-all"
-            />
+          <div className="pt-2 mt-auto">
+            <button
+              type="submit"
+              disabled={loading}
+              className="nordic-btn-primary w-full h-12 md:h-11 rounded-xl md:rounded-[4px] text-sm font-bold tracking-wide cursor-pointer disabled:opacity-50 tap-active shadow-sm"
+            >
+              {loading ? "Updating Password..." : "Set New Password"}
+            </button>
           </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="nordic-btn-primary w-full h-11 text-sm font-bold tracking-wide mt-2 cursor-pointer disabled:opacity-50 tap-active"
-          >
-            {loading ? "Updating Password..." : "Set New Password"}
-          </button>
         </form>
       </div>
     </div>

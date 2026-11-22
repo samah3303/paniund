@@ -19,20 +19,20 @@ export default async function DashboardLayout({
 
   return (
     <SessionProvider session={session}>
-      <div className="min-h-screen bg-nordic-bg text-nordic-text flex flex-col font-sans selection:bg-nordic-secondary selection:text-nordic-text">
+      <div className="h-[100dvh] max-h-[100dvh] overflow-hidden overscroll-none flex flex-col md:h-auto md:min-h-screen md:overflow-visible md:overscroll-auto bg-nordic-bg text-nordic-text font-sans selection:bg-nordic-secondary selection:text-nordic-text">
         {/* Skip to Main Content Link (WCAG 2.1 AA 2.4.1 Bypass Blocks) */}
         <a href="#main-content" className="skip-link">
           Skip to main content
         </a>
 
-        {/* Top Header & Desktop Secondary Navigation */}
+        {/* Top Header & Desktop Secondary Navigation / Mobile Top Bar */}
         <DashboardHeader user={session.user} />
 
-        {/* Main Content Viewport (padded on mobile for bottom bar) */}
+        {/* Main Content Viewport (native smooth touch scrolling on mobile) */}
         <main
           id="main-content"
           tabIndex={-1}
-          className="flex-1 max-w-[1400px] w-full mx-auto px-3 py-4 sm:p-6 lg:p-8 pb-24 md:pb-8 outline-none"
+          className="flex-1 w-full mx-auto px-4 py-3.5 pb-24 md:max-w-[1400px] md:p-8 md:pb-8 outline-none overflow-y-auto overflow-x-hidden md:overflow-visible overscroll-y-contain [-webkit-overflow-scrolling:touch]"
         >
           {children}
         </main>

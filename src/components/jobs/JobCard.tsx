@@ -113,7 +113,7 @@ export const JobCard = React.memo(function JobCard({
 
         <div className="flex items-center gap-2 shrink-0">
           {isApplied ? (
-            <span className="px-2.5 py-1 bg-nordic-success/10 text-nordic-success border border-nordic-success/30 rounded-[4px] text-xs font-bold flex items-center gap-1">
+            <span className="px-3 py-1.5 bg-nordic-success/10 text-nordic-success border border-nordic-success/30 rounded-xl sm:rounded-[4px] text-xs font-bold flex items-center gap-1 min-h-[44px] sm:min-h-[36px]">
               ✓ Applied
             </span>
           ) : (
@@ -121,7 +121,7 @@ export const JobCard = React.memo(function JobCard({
               type="button"
               onClick={(e) => onMarkApplied(e, job.id)}
               aria-label={`Mark ${job.title} at ${job.company || "company"} as applied`}
-              className="px-2.5 py-1.5 bg-white hover:bg-nordic-primary hover:text-white text-nordic-primary border border-nordic-primary rounded-[4px] text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer tap-active min-h-[36px]"
+              className="px-3 py-2 bg-white hover:bg-nordic-primary hover:text-white text-nordic-primary border border-nordic-primary rounded-xl sm:rounded-[4px] text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer tap-active min-h-[44px] sm:min-h-[36px]"
               title="Mark as Applied and add to Tracker"
             >
               ✓ Mark as Applied
@@ -131,7 +131,7 @@ export const JobCard = React.memo(function JobCard({
           <Link
             href={`/dashboard/jobs/${job.id}`}
             aria-label={`View full details for ${job.title}`}
-            className="font-bold text-nordic-primary hover:underline flex items-center gap-1 px-2 py-1.5 min-h-[36px]"
+            className="font-bold text-nordic-primary hover:underline flex items-center gap-1 px-2.5 py-2 min-h-[44px] sm:min-h-[36px] tap-active"
           >
             View ➔
           </Link>
