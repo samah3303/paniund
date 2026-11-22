@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { parseResumeFile, extractProfileFromResume } from "@/lib/resume-parser";
 import { autoPopulateJobsForUser } from "@/lib/job-matcher";
+import { analyzeAtsScore } from "@/lib/ai-tools";
 import { apiSuccess, apiError, handleApiError } from "@/lib/api-response";
 
 const ALLOWED_EXTENSIONS = ["pdf", "docx", "doc", "txt"];
@@ -77,6 +78,26 @@ export async function POST(request: Request) {
 
     // Extract structured data from resume
     const extracted = await extractProfileFromResume(resumeText);
+
+    // Automatically analyze and calculate ATS score on initial upload
+    let atsScore: number | null = null;
+    let atsBreakdown: string | null = null;
+    let recommendations: string | null = null;
+
+    try {
+      const analysis = await analyzeAtsScore(resumeText);
+      atsScore = analysis.overallScore;
+      atsBreakdown = JSON.stringify({
+        keywordScore: analysis.keywordScore,
+        formatScore: analysis.formatScore,
+        impactScore: analysis.impactScore,
+        quantificationScore: analysis.quantificationScore,
+        details: analysis.details,
+      });
+      recommendations = JSON.stringify(analysis.recommendations);
+    } catch (analysisErr) {
+      console.warn("Auto ATS score analysis warning on resume upload:", analysisErr);
+    }
 
     // Determine user — authenticated or new
     const session = await getServerSession(authOptions);
@@ -185,6 +206,9 @@ export async function POST(request: Request) {
       targetRoles: JSON.stringify([candidateRole]),
       preferences: JSON.stringify(mergedPreferences),
       summary: extracted.summary || undefined,
+      atsScore: atsScore ?? undefined,
+      atsBreakdown: atsBreakdown ?? undefined,
+      recommendations: recommendations ?? undefined,
       skills:
         extracted.skills.length > 0
           ? JSON.stringify(extracted.skills)
@@ -228,7 +252,7 @@ export async function POST(request: Request) {
       data: {
         userId,
         action: "resume_uploaded",
-        details: `Uploaded resume: ${file.name}`,
+        details: `Uploaded resume: ${file.name}${atsScore ? ` • Initial ATS Score: ${atsScore}/100` : ""}`,
       },
     });
 
@@ -250,6 +274,7 @@ export async function POST(request: Request) {
         experience: profile.experience ? JSON.parse(profile.experience) : [],
         education: profile.education ? JSON.parse(profile.education) : [],
         resumeFileName: profile.resumeFileName,
+        atsScore: profile.atsScore,
       },
       isNewUser,
       requiresLogin: !isNewUser && !session?.user,

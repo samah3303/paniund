@@ -43,3 +43,53 @@ export async function PATCH(
     return handleApiError(error, "Failed to update user");
   }
 }
+
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const admin = await getAdminSession();
+  if (!admin) {
+    return apiError("Unauthorized. Admin privileges required.", 403);
+  }
+
+  const { id } = await params;
+
+  try {
+    // Prevent admin from deleting their own account
+    if (admin.user.id === id) {
+      return apiError("Security policy: You cannot delete your own admin account.", 400);
+    }
+
+    const candidate = await prisma.user.findUnique({
+      where: { id },
+      select: { id: true, name: true, email: true, role: true },
+    });
+
+    if (!candidate) {
+      return apiError("Candidate profile not found.", 404);
+    }
+
+    // Cascade delete user and all associated records (profile, jobs, applications, logs)
+    await prisma.user.delete({
+      where: { id },
+    });
+
+    // Log admin activity
+    await prisma.activityLog.create({
+      data: {
+        userId: admin.user.id,
+        action: "admin_candidate_deleted",
+        details: `Deleted candidate profile: ${candidate.name || candidate.email} (${candidate.email})`,
+      },
+    });
+
+    return apiSuccess({
+      success: true,
+      deletedId: id,
+      deletedEmail: candidate.email,
+    });
+  } catch (error) {
+    return handleApiError(error, "Failed to delete candidate profile");
+  }
+}

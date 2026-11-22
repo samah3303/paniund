@@ -75,7 +75,7 @@ export default function JobDetailPage({ params }: PageProps) {
       />
 
       {/* Tab Panels */}
-      <div className="nordic-card p-6 sm:p-8">
+      <div className="nordic-card p-4 sm:p-8">
         {/* TAB 1: DETAILS */}
         {activeTab === "details" && (
           <div

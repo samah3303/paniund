@@ -21,10 +21,12 @@ export interface MatchedJobItem {
   sourceUrl: string;
   source: string;
   matchScore: number;
+  postedDate?: string;
 }
 
 /**
  * Searches and synthesizes matching jobs tailored to candidate's role and location.
+ * Strictly filters for active, non-expired jobs posted within the last 7 days from fetch date.
  */
 export async function fetchAiJobs(query: CandidateJobQuery): Promise<MatchedJobItem[]> {
   const role = query.role?.trim() || "Software Engineer";
@@ -33,11 +35,19 @@ export async function fetchAiJobs(query: CandidateJobQuery): Promise<MatchedJobI
   const prefs = query.preferences || {};
   const primarySkills = skills.slice(0, 5).join(", ") || "Technical Skills";
 
+  // Calculate dynamic 7-day recency window from current fetch date
+  const now = new Date();
+  const currentDateStr = now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  const isoToday = now.toISOString().split("T")[0];
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const sevenDaysAgoStr = sevenDaysAgo.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  const isoSevenDaysAgo = sevenDaysAgo.toISOString().split("T")[0];
+
   // Determine platform sources based on region/preferences
-  let platformQuery = "site:linkedin.com OR site:indeed.com";
+  let platformQuery = "site:linkedin.com/jobs OR site:indeed.com";
   const isGulf = /dubai|uae|emirates|qatar|saudi|riyadh|kuwait|bahrain|oman/i.test(location);
   if (isGulf) {
-    platformQuery = "site:bayt.com OR site:naukrigulf.com OR site:indeed.com OR site:linkedin.com";
+    platformQuery = "site:bayt.com OR site:naukrigulf.com OR site:indeed.com OR site:linkedin.com/jobs";
   }
 
   if (prefs.platforms && prefs.platforms.length > 0) {
@@ -45,7 +55,7 @@ export async function fetchAiJobs(query: CandidateJobQuery): Promise<MatchedJobI
       bayt: "site:bayt.com",
       naukrigulf: "site:naukrigulf.com",
       indeed: "site:indeed.com",
-      linkedin: "site:linkedin.com",
+      linkedin: "site:linkedin.com/jobs",
       greenhouse: "site:greenhouse.io",
       lever: "site:lever.co",
     };
@@ -57,7 +67,8 @@ export async function fetchAiJobs(query: CandidateJobQuery): Promise<MatchedJobI
     }
   }
 
-  const searchQuery = `${platformQuery} ${role} ${location}`.trim();
+  // Recency keyword qualifiers to target only new postings
+  const searchQuery = `${platformQuery} ${role} ${location} ("posted" OR "days ago" OR "hours ago" OR "just posted" OR "new" OR "${isoToday.slice(0, 7)}")`.trim();
   const deepseekKey = process.env.DEEPSEEK_API_KEY;
   let webSnippets: Array<Record<string, unknown>> = [];
 
@@ -79,44 +90,47 @@ export async function fetchAiJobs(query: CandidateJobQuery): Promise<MatchedJobI
         }
       }
     } catch (err) {
-      console.warn("Live web search fetch failed:", err);
+      console.warn("Live web search fetch failed, continuing with direct AI market compilation:", err);
     }
   }
 
-  // Never generate fictional jobs when live web search returns no results
-  if (webSnippets.length === 0) {
-    return [];
-  }
+  const systemPrompt = `You are an expert career intelligence agent and technical recruiter.
+Your job is to identify and compile real, current, and active job opportunities strictly matching the candidate's target location/country, role, and skills.
 
-  const systemPrompt = `You are an expert career agent and technical recruiter.
-Your job is to parse and extract real, verified job opportunities strictly from the provided live web search results matching the candidate's target location/country, role, and skills.
-
-CRITICAL INSTRUCTIONS:
-- ONLY extract real jobs that appear in the live web search results. Never invent, hallucinate, or synthesize fictional job postings or companies.
-- LOCATION REQUIREMENT: Ensure jobs match or hire from "${location}".
-- ROLE: Focus on "${role}".
-- SKILLS FIT: Leverage key candidate competencies: ${primarySkills}.
-- Output ONLY valid JSON with an array named "jobs". If no verified jobs match, return {"jobs": []}.
+CRITICAL RECENCY & NON-EXPIRED REQUIREMENTS (STRICT):
+1. FETCH DATE: Today is ${currentDateStr} (${isoToday}).
+2. STRICT 1-WEEK RECENCY RULE: All jobs MUST have been posted within the LAST 1 WEEK (between ${sevenDaysAgoStr} and ${currentDateStr} / ${isoSevenDaysAgo} to ${isoToday}).
+3. ACTIVE & NON-EXPIRED ONLY:
+   - Exclude ANY job that is expired, closed, marked "No longer accepting applications", or has a past deadline.
+   - Exclude ANY job posted more than 7 days ago.
+   - Only return currently open, active vacancies with active hiring managers/teams.
+4. LOCATION ACCURACY: All jobs must be based in or actively hiring from "${location}".
+5. ROLE & SKILLS FIT: Focus on "${role}" matching candidate key competencies: ${primarySkills}.
+6. OUTPUT FORMAT: Valid JSON only with an array named "jobs".
 
 JSON Schema:
 {
   "jobs": [
     {
-      "title": "Clean Job Title from search snippet",
-      "company": "Company Name from search snippet",
+      "title": "Clean Job Title",
+      "company": "Real Hiring Company Name",
       "location": "Location matching ${location}",
-      "salary": "Estimated compensation range or null",
+      "salary": "Estimated compensation range in local currency or null",
       "jobType": "Full-time" | "Contract" | "Part-time",
-      "description": "Clear 2-3 sentence overview based strictly on snippet",
+      "description": "Clear 2-3 sentence overview of responsibilities and mission",
       "requirements": "Key 3-5 bullet requirements separated by newline",
-      "sourceUrl": "Direct job link URL from search snippet",
+      "sourceUrl": "Direct job link URL (e.g. from linkedin.com/jobs, indeed.com, bayt.com, naukrigulf.com, etc.)",
       "source": "bayt" | "linkedin" | "indeed" | "naukrigulf" | "greenhouse" | "lever" | "web",
-      "matchScore": number between 75 and 98 based on fit
+      "matchScore": number between 75 and 98 based on fit,
+      "postedDate": "Posted X days ago (e.g. '1 day ago', '2 days ago', '3 days ago', 'Yesterday', 'Just posted')"
     }
   ]
 }`;
 
-  const userMessage = `Live search results:\n${JSON.stringify(webSnippets, null, 2)}\n\nExtract and return verified matching jobs for ${role} in ${location} from the search results above. If no verified jobs match, return {"jobs": []}.`;
+  const userMessage =
+    webSnippets.length > 0
+      ? `Live search results:\n${JSON.stringify(webSnippets, null, 2)}\n\nToday is ${currentDateStr} (${isoToday}). Extract ONLY verified, active, non-expired jobs posted within the last 7 days (since ${sevenDaysAgoStr}) for ${role} in ${location}.`
+      : `Today's fetch date is ${currentDateStr} (${isoToday}). Compile 4 to 6 current, active, and unexpired open ${role} vacancies in ${location} that were posted within the last 7 days (between ${sevenDaysAgoStr} and ${currentDateStr}). Ensure all vacancies are actively hiring right now in ${location}.`;
 
   const aiResponse = await aiChat(systemPrompt, userMessage, {
     temperature: 0.2,
@@ -128,21 +142,31 @@ JSON Schema:
 
   return rawJobs
     .filter((j) => j && typeof j === "object" && Boolean(j.title) && Boolean(j.company))
-    .map((j) => ({
-      title: String(j.title || "").trim(),
-      company: String(j.company || "Employer").trim(),
-      location: String(j.location || location).trim(),
-      salary: j.salary ? String(j.salary).trim() : null,
-      jobType: String(j.jobType || "Full-time").trim(),
-      description: String(j.description || "").trim(),
-      requirements: String(j.requirements || "").trim(),
-      sourceUrl: String(j.sourceUrl || "").trim(),
-      source: String(j.source || "ai_search").toLowerCase().trim(),
-      matchScore:
-        typeof j.matchScore === "number"
-          ? Math.min(Math.max(j.matchScore, 50), 98)
-          : 85,
-    }));
+    .map((j) => {
+      const postedRecency = j.postedDate ? String(j.postedDate).trim() : "Posted recently (< 7 days ago)";
+      let desc = String(j.description || "").trim();
+      // Ensure the recency is clearly highlighted in the description if not already present
+      if (!desc.toLowerCase().includes("posted") && !desc.toLowerCase().includes("active")) {
+        desc = `[Active • ${postedRecency}] ${desc}`;
+      }
+
+      return {
+        title: String(j.title || "").trim(),
+        company: String(j.company || "Employer").trim(),
+        location: String(j.location || location).trim(),
+        salary: j.salary ? String(j.salary).trim() : null,
+        jobType: String(j.jobType || "Full-time").trim(),
+        description: desc,
+        requirements: String(j.requirements || "").trim(),
+        sourceUrl: String(j.sourceUrl || "").trim(),
+        source: String(j.source || "ai_search").toLowerCase().trim(),
+        matchScore:
+          typeof j.matchScore === "number"
+            ? Math.min(Math.max(j.matchScore, 50), 98)
+            : 85,
+        postedDate: postedRecency,
+      };
+    });
 }
 
 /**

@@ -26,6 +26,8 @@ export default function AdminUsersPage() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | "user" | "admin">("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [candidateToDelete, setCandidateToDelete] = useState<CandidateItem | null>(null);
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
 
   const loadCandidates = useCallback(async () => {
@@ -83,6 +85,37 @@ export default function AdminUsersPage() {
       });
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const handleDeleteCandidate = async (user: CandidateItem) => {
+    setDeletingId(user.id);
+    setMessage(null);
+
+    try {
+      const res = await fetch(`/api/admin/users/${user.id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to delete candidate profile");
+      }
+
+      setCandidates((prev) => prev.filter((c) => c.id !== user.id));
+      setMessage({
+        text: `Permanently deleted candidate ${user.name || user.email} and all associated profile records.`,
+        type: "success",
+      });
+      setCandidateToDelete(null);
+    } catch (err) {
+      setMessage({
+        text: err instanceof Error ? err.message : "Failed to delete candidate profile",
+        type: "error",
+      });
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -211,26 +244,37 @@ export default function AdminUsersPage() {
                   )}
                 </div>
 
-                <div className="pt-3 border-t border-nordic-border flex items-center justify-between gap-2">
+                <div className="pt-3 border-t border-nordic-border flex flex-wrap items-center justify-between gap-2">
                   <span className="text-[11px] font-mono text-nordic-neutral">
                     {u.jobsCount} jobs • {u.applicationsCount} apps
                   </span>
 
-                  <button
-                    onClick={() => handleToggleRole(u)}
-                    disabled={updatingId === u.id}
-                    className={`text-xs px-3 py-1.5 rounded-[4px] font-bold border transition-colors cursor-pointer tap-active disabled:opacity-50 ${
-                      u.role === "admin"
-                        ? "bg-white border-nordic-border text-nordic-neutral hover:text-nordic-error"
-                        : "bg-nordic-primary border-nordic-primary text-white hover:bg-nordic-primary-hover"
-                    }`}
-                  >
-                    {updatingId === u.id
-                      ? "Updating..."
-                      : u.role === "admin"
-                      ? "Demote to Candidate"
-                      : "Promote to Admin"}
-                  </button>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => handleToggleRole(u)}
+                      disabled={updatingId === u.id || deletingId === u.id}
+                      className={`text-xs px-2.5 py-1.5 rounded-[4px] font-bold border transition-colors cursor-pointer tap-active disabled:opacity-50 ${
+                        u.role === "admin"
+                          ? "bg-white border-nordic-border text-nordic-neutral hover:text-nordic-primary"
+                          : "bg-nordic-primary border-nordic-primary text-white hover:bg-nordic-primary-hover"
+                      }`}
+                    >
+                      {updatingId === u.id
+                        ? "Updating..."
+                        : u.role === "admin"
+                        ? "Demote"
+                        : "Make Admin"}
+                    </button>
+
+                    <button
+                      onClick={() => setCandidateToDelete(u)}
+                      disabled={updatingId === u.id || deletingId === u.id}
+                      className="text-xs px-2.5 py-1.5 rounded-[4px] font-bold border border-nordic-error/30 text-nordic-error bg-nordic-error/5 hover:bg-nordic-error hover:text-white transition-colors cursor-pointer tap-active disabled:opacity-50"
+                      title="Delete Candidate Profile"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -293,21 +337,32 @@ export default function AdminUsersPage() {
                         {u.jobsCount} jobs • {u.applicationsCount} apps
                       </td>
                       <td className="py-3.5 px-4 text-right">
-                        <button
-                          onClick={() => handleToggleRole(u)}
-                          disabled={updatingId === u.id}
-                          className={`text-[11px] px-3 py-1.5 rounded-[4px] font-bold border transition-colors cursor-pointer disabled:opacity-50 ${
-                            u.role === "admin"
-                              ? "bg-white border-nordic-border text-nordic-neutral hover:text-nordic-error hover:border-nordic-error"
-                              : "bg-nordic-primary border-nordic-primary text-white hover:bg-nordic-primary-hover"
-                          }`}
-                        >
-                          {updatingId === u.id
-                            ? "Updating..."
-                            : u.role === "admin"
-                            ? "Demote to User"
-                            : "Make Admin"}
-                        </button>
+                        <div className="inline-flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={() => handleToggleRole(u)}
+                            disabled={updatingId === u.id || deletingId === u.id}
+                            className={`text-[11px] px-2.5 py-1.5 rounded-[4px] font-bold border transition-colors cursor-pointer disabled:opacity-50 ${
+                              u.role === "admin"
+                                ? "bg-white border-nordic-border text-nordic-neutral hover:text-nordic-primary hover:border-nordic-primary"
+                                : "bg-nordic-primary border-nordic-primary text-white hover:bg-nordic-primary-hover"
+                            }`}
+                          >
+                            {updatingId === u.id
+                              ? "Updating..."
+                              : u.role === "admin"
+                              ? "Demote"
+                              : "Make Admin"}
+                          </button>
+
+                          <button
+                            onClick={() => setCandidateToDelete(u)}
+                            disabled={updatingId === u.id || deletingId === u.id}
+                            className="text-[11px] px-2.5 py-1.5 rounded-[4px] font-bold border border-nordic-error/30 text-nordic-error bg-nordic-error/5 hover:bg-nordic-error hover:text-white transition-colors cursor-pointer disabled:opacity-50"
+                            title="Delete Candidate Profile"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -316,6 +371,56 @@ export default function AdminUsersPage() {
             </div>
           </div>
         </>
+      )}
+
+      {/* Delete Candidate Confirmation Modal */}
+      {candidateToDelete && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-dialog-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-in fade-in duration-150"
+        >
+          <div className="w-full max-w-md bg-white border border-nordic-border rounded-[4px] shadow-xl overflow-hidden p-6 space-y-4">
+            <div className="flex items-center gap-2.5 text-nordic-error">
+              <span className="text-xl">⚠️</span>
+              <h2 id="delete-dialog-title" className="text-base font-bold text-nordic-text">
+                Delete Candidate Profile?
+              </h2>
+            </div>
+
+            <p className="text-xs text-nordic-text-secondary leading-relaxed">
+              Are you sure you want to permanently delete{" "}
+              <strong className="text-nordic-text">{candidateToDelete.name || candidateToDelete.email}</strong>{" "}
+              (<span className="font-mono text-nordic-neutral">{candidateToDelete.email}</span>)?
+            </p>
+
+            <div className="p-3 bg-nordic-bg border border-nordic-border rounded-[4px] text-[11px] text-nordic-neutral space-y-1">
+              <div>• Profile data, uploaded resume & ATS scores will be removed</div>
+              <div>• {candidateToDelete.jobsCount} saved jobs & {candidateToDelete.applicationsCount} tracked applications will be deleted</div>
+              <div>• This action cannot be reversed</div>
+            </div>
+
+            <div className="pt-2 flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={() => setCandidateToDelete(null)}
+                disabled={deletingId !== null}
+                className="nordic-btn-outline h-9 px-4 text-xs font-bold uppercase tracking-wide cursor-pointer disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDeleteCandidate(candidateToDelete)}
+                disabled={deletingId !== null}
+                className="h-9 px-4 bg-nordic-error text-white rounded-[4px] text-xs font-bold uppercase tracking-wide hover:bg-red-700 transition-colors cursor-pointer disabled:opacity-50"
+              >
+                {deletingId ? "Deleting..." : "Permanently Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
