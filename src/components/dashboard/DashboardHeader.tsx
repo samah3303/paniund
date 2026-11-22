@@ -84,7 +84,7 @@ export default function DashboardHeader({ user }: DashboardHeaderProps) {
   const isAdmin = user?.role === "admin" || user?.email === "demo@paniund.com";
 
   return (
-    <header className="sticky top-0 z-40 bg-nordic-primary text-white shadow-sm" role="banner">
+    <header className="hidden md:block sticky top-0 z-40 bg-nordic-primary text-white shadow-sm" role="banner">
       <div className="flex h-13 sm:h-[60px] items-center justify-between px-3.5 sm:px-8 max-w-[1400px] mx-auto w-full">
         {/* Logo Left */}
         <div className="flex items-center gap-4 sm:gap-6">

@@ -10,6 +10,7 @@ import ApiTokenSection from "@/components/profile/ApiTokenSection";
 import SkillsSection from "@/components/profile/SkillsSection";
 import ExperienceSection from "@/components/profile/ExperienceSection";
 import EducationSection from "@/components/profile/EducationSection";
+import AccountSection from "@/components/profile/AccountSection";
 
 export default function ProfilePage() {
   const {
@@ -119,6 +120,9 @@ export default function ProfilePage() {
         handleUploadResume={handleUploadResume}
         handleReanalyzeAts={handleReanalyzeAts}
       />
+
+      {/* Account & Session Management (Admin Access & Sign Out) */}
+      <AccountSection />
 
       {/* Main Form Card */}
       <div className="nordic-card rounded-2xl sm:rounded-[4px] p-4.5 sm:p-8">
