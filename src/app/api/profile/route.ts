@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getAuthenticatedUserId } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 import { updateProfileSchema } from "@/lib/validations";
 import { apiSuccess, apiError, handleApiError } from "@/lib/api-response";
@@ -14,14 +13,12 @@ function safeParse<T>(val: string | null | undefined, fallback: T): T {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    const userId = await getAuthenticatedUserId(request);
+    if (!userId) {
       return apiError("Unauthorized", 401);
     }
-
-    const userId = (session.user as { id: string }).id;
 
     const [user, profile] = await Promise.all([
       prisma.user.findUnique({
@@ -85,12 +82,10 @@ export async function GET() {
 
 export async function PUT(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    const userId = await getAuthenticatedUserId(request);
+    if (!userId) {
       return apiError("Unauthorized", 401);
     }
-
-    const userId = (session.user as { id: string }).id;
     const rawBody = await request.json().catch(() => null);
     if (!rawBody) {
       return apiError("Invalid JSON body", 400);

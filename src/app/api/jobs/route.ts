@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getAuthenticatedUserId } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 import { createJobSchema } from "@/lib/validations";
 import { autoPopulateJobsForUser } from "@/lib/job-matcher";
@@ -7,12 +6,10 @@ import { apiSuccess, apiError, handleApiError } from "@/lib/api-response";
 
 export async function GET(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    const userId = await getAuthenticatedUserId(request);
+    if (!userId) {
       return apiError("Unauthorized", 401);
     }
-
-    const userId = (session.user as { id: string }).id;
     const { searchParams } = new URL(request.url);
     const bookmarked = searchParams.get("bookmarked");
 
@@ -58,12 +55,10 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    const userId = await getAuthenticatedUserId(request);
+    if (!userId) {
       return apiError("Unauthorized", 401);
     }
-
-    const userId = (session.user as { id: string }).id;
     const body = await request.json();
 
     // Strict schema validation & sanitization via Zod

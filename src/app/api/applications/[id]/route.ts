@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getAuthenticatedUserId } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 import { updateApplicationSchema } from "@/lib/validations";
 import { apiSuccess, apiError, handleApiError } from "@/lib/api-response";
@@ -9,12 +8,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    const userId = await getAuthenticatedUserId(request);
+    if (!userId) {
       return apiError("Unauthorized", 401);
     }
-
-    const userId = (session.user as { id: string }).id;
     const { id } = await params;
 
     const application = await prisma.application.findUnique({
@@ -43,12 +40,10 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    const userId = await getAuthenticatedUserId(request);
+    if (!userId) {
       return apiError("Unauthorized", 401);
     }
-
-    const userId = (session.user as { id: string }).id;
     const { id } = await params;
 
     const existing = await prisma.application.findUnique({
@@ -132,12 +127,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    const userId = await getAuthenticatedUserId(request);
+    if (!userId) {
       return apiError("Unauthorized", 401);
     }
-
-    const userId = (session.user as { id: string }).id;
     const { id } = await params;
 
     const existing = await prisma.application.findUnique({ where: { id } });

@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getAuthenticatedUserId } from "@/lib/api-auth";
 import { aiChat, parseJsonSafely } from "@/lib/ai";
 import { parseUrlSchema } from "@/lib/validations";
 import { apiSuccess, apiError, handleApiError } from "@/lib/api-response";
@@ -35,8 +34,8 @@ function isDisallowedHost(urlString: string): boolean {
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    const userId = await getAuthenticatedUserId(request);
+    if (!userId) {
       return apiError("Unauthorized", 401);
     }
 

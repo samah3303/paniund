@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getAuthenticatedUserId } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 import { parseResumeFile, extractProfileFromResume } from "@/lib/resume-parser";
 import { autoPopulateJobsForUser } from "@/lib/job-matcher";
@@ -100,12 +99,12 @@ export async function POST(request: Request) {
     }
 
     // Determine user — authenticated or new
-    const session = await getServerSession(authOptions);
+    const authUserId = await getAuthenticatedUserId(request);
     let userId: string;
     let isNewUser = false;
 
-    if (session?.user && (session.user as { id: string }).id) {
-      userId = (session.user as { id: string }).id;
+    if (authUserId) {
+      userId = authUserId;
     } else {
       // Unauthenticated upload — look up or create user by email
       const userProvidedEmail = (formData.get("email") as string | null)?.toLowerCase().trim();
@@ -277,7 +276,7 @@ export async function POST(request: Request) {
         atsScore: profile.atsScore,
       },
       isNewUser,
-      requiresLogin: !isNewUser && !session?.user,
+      requiresLogin: !isNewUser && !authUserId,
       name: extracted.name,
     });
   } catch (error) {

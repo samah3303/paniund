@@ -1,17 +1,14 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getAuthenticatedUserId } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 import { createApplicationSchema } from "@/lib/validations";
 import { apiSuccess, apiError, handleApiError } from "@/lib/api-response";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    const userId = await getAuthenticatedUserId(request);
+    if (!userId) {
       return apiError("Unauthorized", 401);
     }
-
-    const userId = (session.user as { id: string }).id;
 
     const applications = await prisma.application.findMany({
       where: { userId },
@@ -35,12 +32,10 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    const userId = await getAuthenticatedUserId(request);
+    if (!userId) {
       return apiError("Unauthorized", 401);
     }
-
-    const userId = (session.user as { id: string }).id;
     const body = await request.json();
 
     const { jobId, status } = createApplicationSchema.parse(body);

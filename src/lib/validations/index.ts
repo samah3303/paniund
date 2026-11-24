@@ -4,6 +4,19 @@ import { sanitizeText, sanitizeUrl, sanitizeEmail } from "@/lib/sanitize";
 // ==========================================
 // Authentication Schemas
 // ==========================================
+export const loginSchema = z.object({
+  email: z
+    .string()
+    .min(3, "Email is required")
+    .max(255, "Email is too long")
+    .email("Invalid email format")
+    .transform(sanitizeEmail),
+  password: z
+    .string()
+    .min(1, "Password is required")
+    .max(128, "Password must not exceed 128 characters"),
+});
+
 export const registerSchema = z.object({
   email: z
     .string()

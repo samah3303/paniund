@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getAuthenticatedUserId } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 import type { ApplicationStatus } from "@/types";
 
@@ -200,25 +199,8 @@ function calculateIntelligentAtsScore({
 
 export async function POST(request: Request) {
   try {
-    // 1. Authenticate via Bearer token or session
-    const authHeader = request.headers.get("authorization");
-    let userId: string | null = null;
-
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      const token = authHeader.replace("Bearer ", "").trim();
-      const user = await prisma.user.findUnique({
-        where: { apiToken: token },
-        select: { id: true },
-      });
-      if (user) userId = user.id;
-    }
-
-    if (!userId) {
-      const session = await getServerSession(authOptions);
-      if (session?.user && (session.user as { id: string }).id) {
-        userId = (session.user as { id: string }).id;
-      }
-    }
+    // 1. Authenticate via Bearer JWT, API token, or session
+    const userId = await getAuthenticatedUserId(request);
 
     if (!userId) {
       return NextResponse.json(
