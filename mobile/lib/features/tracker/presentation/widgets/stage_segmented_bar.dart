@@ -73,7 +73,7 @@ class StageSegmentedBar extends StatelessWidget {
                     ),
                     child: Text(
                       "$count",
-                      style: GoogleFonts.jetbrainsMono(
+                      style: GoogleFonts.jetBrainsMono(
                         fontSize: 10.5,
                         fontWeight: FontWeight.w700,
                         color: isSelected ? NordicColors.textDark : NordicColors.textMuted,

@@ -56,7 +56,7 @@ class SkillsWrap extends StatelessWidget {
                   const SizedBox(width: 5),
                   Text(
                     skill,
-                    style: GoogleFonts.jetbrainsMono(
+                    style: GoogleFonts.jetBrainsMono(
                       fontSize: 11.5,
                       fontWeight: FontWeight.w600,
                       color: fgColor,

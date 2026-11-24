@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../resume/data/models/profile_model.dart';
-import '../data/profile_repository.dart';
+import '../../../resume/data/models/profile_model.dart';
+import '../../data/profile_repository.dart';
 
 class ProfileState {
   final bool isLoading;

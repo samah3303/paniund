@@ -7,7 +7,7 @@ import '../../../../core/theme/nordic_typography.dart';
 import '../../../../shared/widgets/ats_score_meter.dart';
 import '../../../../shared/widgets/nordic_button.dart';
 import '../../../../shared/widgets/nordic_card.dart';
-import '../../../resume/presentation/controllers/resume_controller.dart';
+import '../../resume/presentation/controllers/resume_controller.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});

@@ -124,7 +124,7 @@ class JobClipPreviewSheet extends ConsumerWidget {
                         const SizedBox(width: 4),
                         Text(
                           "Clipped from ${job.source}",
-                          style: GoogleFonts.jetbrainsMono(
+                          style: GoogleFonts.jetBrainsMono(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
                             color: NordicColors.navyDark,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/nordic_colors.dart';
-import '../../../../shared/widgets/nordic_button.dart';
 
 class InterviewDateDialog {
   static Future<DateTime?> pick(

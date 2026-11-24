@@ -4,7 +4,6 @@ import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_response.dart';
 import 'models/application_model.dart';
-import 'models/job_model.dart';
 
 final trackerRepositoryProvider = Provider<TrackerRepository>((ref) {
   final apiClient = ref.watch(apiClientProvider);

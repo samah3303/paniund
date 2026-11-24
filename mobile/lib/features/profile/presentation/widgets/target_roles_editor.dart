@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/nordic_colors.dart';
 import '../../../../core/theme/nordic_typography.dart';
-import '../../../../shared/widgets/nordic_button.dart';
 import '../../../../shared/widgets/nordic_card.dart';
 
 class TargetRolesEditor extends StatefulWidget {

@@ -72,7 +72,7 @@ class RecommendationCard extends StatelessWidget {
                 ),
                 child: Text(
                   badgeLabel,
-                  style: GoogleFonts.jetbrainsMono(
+                  style: GoogleFonts.jetBrainsMono(
                     fontSize: 9.5,
                     fontWeight: FontWeight.w700,
                     color: badgeFg,

@@ -48,7 +48,7 @@ class GeneratedResultCard extends StatelessWidget {
                     ),
                     child: Text(
                       "$wordCount words",
-                      style: GoogleFonts.jetbrainsMono(
+                      style: GoogleFonts.jetBrainsMono(
                         fontSize: 10.5,
                         fontWeight: FontWeight.w700,
                         color: NordicColors.navyDark,

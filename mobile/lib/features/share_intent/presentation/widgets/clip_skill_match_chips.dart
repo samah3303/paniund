@@ -46,7 +46,7 @@ class ClipSkillMatchChips extends StatelessWidget {
                 ),
                 child: Text(
                   skill,
-                  style: GoogleFonts.jetbrainsMono(
+                  style: GoogleFonts.jetBrainsMono(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     color: NordicColors.scoreHigh,
@@ -87,7 +87,7 @@ class ClipSkillMatchChips extends StatelessWidget {
                 ),
                 child: Text(
                   skill,
-                  style: GoogleFonts.jetbrainsMono(
+                  style: GoogleFonts.jetBrainsMono(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     color: NordicColors.scoreMed,

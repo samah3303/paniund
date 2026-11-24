@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -252,7 +253,7 @@ class _ApplicationDetailScreenState extends ConsumerState<ApplicationDetailScree
                           const SizedBox(width: 8),
                           Text(
                             DateFormat("EEEE, MMMM d, y 'at' h:mm a").format(_app.interviewDate!),
-                            style: GoogleFonts.jetbrainsMono(
+                            style: GoogleFonts.jetBrainsMono(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                               color: _app.isInterviewSoon ? NordicColors.navyDark : NordicColors.navy,

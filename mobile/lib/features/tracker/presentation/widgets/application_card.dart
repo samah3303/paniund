@@ -123,7 +123,7 @@ class ApplicationCard extends StatelessWidget {
                     isInterviewSoon
                         ? "Interview in <48h: ${_formatDate(application.interviewDate)}"
                         : "Interview: ${_formatDate(application.interviewDate)}",
-                    style: GoogleFonts.jetbrainsMono(
+                    style: GoogleFonts.jetBrainsMono(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       color: isInterviewSoon ? NordicColors.navyDark : const Color(0xFFB45309),

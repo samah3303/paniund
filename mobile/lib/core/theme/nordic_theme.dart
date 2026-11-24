@@ -65,7 +65,7 @@ class NordicTheme {
         type: BottomNavigationBarType.fixed,
         elevation: 8,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: NordicColors.surfaceWhite,
         elevation: 0,
         margin: EdgeInsets.zero,

@@ -112,7 +112,7 @@ class ApiTokenCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     token,
-                    style: GoogleFonts.jetbrainsMono(
+                    style: GoogleFonts.jetBrainsMono(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: NordicColors.navyDark,

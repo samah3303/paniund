@@ -69,7 +69,7 @@ class AtsScoreMeter extends StatelessWidget {
                     children: [
                       Text(
                         "${(value * 100).toInt()}",
-                        style: GoogleFonts.jetbrainsMono(
+                        style: GoogleFonts.jetBrainsMono(
                           fontSize: size * 0.28,
                           fontWeight: FontWeight.w800,
                           color: NordicColors.textDark,
@@ -103,7 +103,7 @@ class AtsScoreMeter extends StatelessWidget {
             ),
             child: Text(
               tierLabel,
-              style: GoogleFonts.jetbrainsMono(
+              style: GoogleFonts.jetBrainsMono(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 color: scoreColor,
@@ -153,7 +153,7 @@ class ScoreBadge extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             "$score%",
-            style: GoogleFonts.jetbrainsMono(
+            style: GoogleFonts.jetBrainsMono(
               fontSize: compact ? 11 : 12,
               fontWeight: FontWeight.w700,
               color: color,

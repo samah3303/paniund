@@ -48,7 +48,7 @@ class DimensionalScoreBar extends StatelessWidget {
               children: [
                 Text(
                   "$clampedScore",
-                  style: GoogleFonts.jetbrainsMono(
+                  style: GoogleFonts.jetBrainsMono(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: color,
@@ -56,7 +56,7 @@ class DimensionalScoreBar extends StatelessWidget {
                 ),
                 Text(
                   "/100",
-                  style: GoogleFonts.jetbrainsMono(
+                  style: GoogleFonts.jetBrainsMono(
                     fontSize: 11,
                     color: NordicColors.textMuted,
                   ),

@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../tracker/presentation/controllers/tracker_controller.dart';
-import '../data/job_clipper_repository.dart';
-import '../data/models/clipped_job_model.dart';
+import '../../../tracker/presentation/controllers/tracker_controller.dart';
+import '../../data/job_clipper_repository.dart';
+import '../../data/models/clipped_job_model.dart';
 
 class ShareIntentState {
   final bool isAnalyzing;

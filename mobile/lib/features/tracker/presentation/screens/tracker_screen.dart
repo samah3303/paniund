@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/nordic_colors.dart';
 import '../../../../core/theme/nordic_typography.dart';
 import '../../../../shared/widgets/loading_indicator.dart';
-import '../../../../shared/widgets/nordic_card.dart';
 import '../../../share_intent/presentation/controllers/share_intent_controller.dart';
 import '../../../share_intent/presentation/widgets/job_clip_preview_sheet.dart';
 import '../../../share_intent/services/share_intent_service.dart';

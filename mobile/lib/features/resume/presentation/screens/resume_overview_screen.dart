@@ -152,7 +152,7 @@ class ResumeOverviewScreen extends ConsumerWidget {
                   DimensionalScoreBar(
                     label: "Quantification & Measurable Metrics",
                     score: audit.quantificationScore,
-                    weightDescription: "15% of overall score • Data-backed results ($/%, counts)",
+                    weightDescription: r"15% of overall score • Data-backed results ($/%, counts)",
                     icon: Icons.query_stats_rounded,
                   ),
                 ],

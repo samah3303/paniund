@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/nordic_colors.dart';
 import '../../../../core/theme/nordic_typography.dart';
-import '../../../../shared/widgets/loading_indicator.dart';
 import '../../../../shared/widgets/nordic_button.dart';
 import '../../../../shared/widgets/nordic_card.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
@@ -145,7 +145,7 @@ class ProfileScreen extends ConsumerWidget {
             Center(
               child: Text(
                 "paniund Mobile • v1.0.0+1 • Nordic Yellow Design System",
-                style: GoogleFonts.jetbrainsMono(
+                style: GoogleFonts.jetBrainsMono(
                   fontSize: 10,
                   color: NordicColors.textMuted,
                 ),

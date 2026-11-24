@@ -10,13 +10,16 @@ class ShareIntentService {
     if (kIsWeb) return;
 
     try {
-      // 1. Listen to shared text when app is in memory (warm/foreground)
+      // 1. Listen to shared text/media when app is in memory (warm/foreground)
       _intentSub?.cancel();
-      _intentSub = ReceiveSharingIntent.instance.getTextStream().listen(
-        (String text) {
-          final url = extractUrl(text);
-          if (url != null) {
-            onJobUrlReceived(url);
+      _intentSub = ReceiveSharingIntent.instance.getMediaStream().listen(
+        (List<SharedMediaFile> value) {
+          for (final file in value) {
+            final url = extractUrl(file.path) ?? (file.message != null ? extractUrl(file.message!) : null);
+            if (url != null) {
+              onJobUrlReceived(url);
+              break;
+            }
           }
         },
         onError: (err) {
@@ -24,14 +27,16 @@ class ShareIntentService {
         },
       );
 
-      // 2. Handle shared text when app was launched from scratch (cold boot)
-      ReceiveSharingIntent.instance.getInitialText().then((String? text) {
-        if (text != null) {
-          final url = extractUrl(text);
+      // 2. Handle shared text/media when app was launched from scratch (cold boot)
+      ReceiveSharingIntent.instance.getInitialMedia().then((List<SharedMediaFile> value) {
+        for (final file in value) {
+          final url = extractUrl(file.path) ?? (file.message != null ? extractUrl(file.message!) : null);
           if (url != null) {
             onJobUrlReceived(url);
+            break;
           }
         }
+        ReceiveSharingIntent.instance.reset();
       }).catchError((err) {
         debugPrint("[ShareIntentService] Initial text error: $err");
       });

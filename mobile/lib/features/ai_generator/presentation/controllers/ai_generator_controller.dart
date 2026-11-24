@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../data/ai_generator_repository.dart';
-import '../data/models/generation_request_model.dart';
+import '../../data/ai_generator_repository.dart';
+import '../../data/models/generation_request_model.dart';
 
 class AiGeneratorState {
   final bool isGenerating;

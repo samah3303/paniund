@@ -46,24 +46,24 @@ class NordicTypography {
       );
 
   // Monospace styles for ATS Scores, Keywords & Metrics (JetBrains Mono)
-  static TextStyle get scoreMetric => GoogleFonts.jetbrainsMono(
+  static TextStyle get scoreMetric => GoogleFonts.jetBrainsMono(
         fontSize: 32,
         fontWeight: FontWeight.w800,
         letterSpacing: -1.0,
       );
 
-  static TextStyle get scoreSmall => GoogleFonts.jetbrainsMono(
+  static TextStyle get scoreSmall => GoogleFonts.jetBrainsMono(
         fontSize: 14,
         fontWeight: FontWeight.w700,
       );
 
-  static TextStyle get codeSnippet => GoogleFonts.jetbrainsMono(
+  static TextStyle get codeSnippet => GoogleFonts.jetBrainsMono(
         fontSize: 12,
         fontWeight: FontWeight.w500,
         color: NordicColors.navyDark,
       );
 
-  static TextStyle get pillLabel => GoogleFonts.jetbrainsMono(
+  static TextStyle get pillLabel => GoogleFonts.jetBrainsMono(
         fontSize: 11,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.2,
