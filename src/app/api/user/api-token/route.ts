@@ -53,3 +53,24 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Failed to generate token" }, { status: 500 });
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const userId = await getAuthenticatedUserId(request);
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { apiToken: null },
+    });
+
+    return NextResponse.json({
+      message: "API token revoked successfully.",
+    });
+  } catch (error) {
+    console.error("API token revocation error:", error);
+    return NextResponse.json({ error: "Failed to revoke token" }, { status: 500 });
+  }
+}

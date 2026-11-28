@@ -7,6 +7,8 @@
     "build": "prisma generate && next build",
     "postinstall": "prisma generate",
     "db:empty": "node scripts/empty-db.js",
+    "n8n:start": "docker compose -f docker-compose.n8n.yml up -d",
+    "n8n:stop": "docker compose -f docker-compose.n8n.yml down",
     "start": "next start",
     "lint": "eslint"
   },
