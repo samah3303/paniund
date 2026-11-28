@@ -1,0 +1,208 @@
+{
+  "name": "paniund - Daily Job Radar & Telegram Alerts",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "id": "2",
+      "name": "Daily 8:00 AM Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [200, 480]
+    },
+    {
+      "parameters": {
+        "url": "https://remotive.com/api/remote-jobs?category=software-dev&limit=10",
+        "options": {}
+      },
+      "id": "3",
+      "name": "Fetch Open Tech Jobs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 380]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare compact job summaries for DeepSeek analysis\nconst jobs = $input.item.json.jobs || [];\nconst summarizedJobs = jobs.slice(0, 10).map((j, i) => ({\n  id: i + 1,\n  title: j.title,\n  company_name: j.company_name,\n  candidate_required_location: j.candidate_required_location || 'Remote',\n  salary: j.salary || 'Not specified',\n  url: j.url,\n  tags: (j.tags || []).slice(0, 5).join(', ')\n}));\n\nreturn [{\n  json: {\n    jobs: summarizedJobs\n  }\n}];"
+      },
+      "id": "4",
+      "name": "Summarize Jobs for AI",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 380]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.deepseek.com/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.DEEPSEEK_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"deepseek-chat\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an elite talent matcher. Compare these tech job openings against the candidate's target profile: Fullstack / Software Engineer (React, Next.js, Node.js, TypeScript, PostgreSQL, AI integration).\\nSelect the top 3 best matching jobs with matchScore >= 75.\\nReturn pure JSON with no markdown formatting:\\n{\\n  \\\"topMatches\\\": [\\n    {\\n      \\\"title\\\": string,\\n      \\\"company\\\": string,\\n      \\\"location\\\": string,\\n      \\\"url\\\": string,\\n      \\\"matchScore\\\": number (75-100),\\n      \\\"reason\\\": string (1 punchy line explaining why it fits)\\n    }\\n  ]\\n}\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Jobs list: {{ JSON.stringify($json.jobs) }}\"\n    }\n  ],\n  \"temperature\": 0.2\n}",
+        "options": {}
+      },
+      "id": "5",
+      "name": "DeepSeek Match Scorer",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 380]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse DeepSeek output and build Telegram message\nconst content = $input.item.json.choices[0].message.content;\nlet clean = content.trim();\nconst fence = clean.match(/```(?:json)?\\s*([\\s\\S]*?)```/);\nif (fence) clean = fence[1].trim();\n\nconst parsed = JSON.parse(clean);\nconst topMatches = parsed.topMatches || [];\n\nlet message = \"🎯 *paniund Daily Job Radar* 🎯\\n\\nHere are your top tailored job matches for today:\\n\\n\";\n\ntopMatches.forEach((m, idx) => {\n  message += '*' + (idx + 1) + '. ' + m.title + '* @ *' + m.company + '*\\n';\n  message += '📊 Match: `' + m.matchScore + '%` | 📍 ' + m.location + '\\n';\n  message += '💡 _' + m.reason + '_\\n';\n  message += '🔗 [Apply / View Details](' + m.url + ')\\n\\n';\n});\n\nmessage += \"_All jobs synced to your paniund Wishlist board._\";\n\nreturn topMatches.map(m => ({\n  json: {\n    ...m,\n    telegramMessage: message\n  }\n}));"
+      },
+      "id": "6",
+      "name": "Format Alerts & Jobs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 380]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"chat_id\": \"{{ $env.TELEGRAM_CHAT_ID }}\",\n  \"text\": \"{{ $json.telegramMessage }}\",\n  \"parse_mode\": \"Markdown\",\n  \"disable_web_page_preview\": false\n}",
+        "options": {}
+      },
+      "id": "7",
+      "name": "Send Telegram Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 260]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.PANIUND_API_URL }}/api/webhooks/n8n",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.PANIUND_API_TOKEN }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event\": \"job.ingest\",\n  \"title\": \"{{ $json.title }}\",\n  \"company\": \"{{ $json.company }}\",\n  \"location\": \"{{ $json.location }}\",\n  \"sourceUrl\": \"{{ $json.url }}\",\n  \"source\": \"n8n_radar\",\n  \"matchScore\": {{ $json.matchScore }},\n  \"createApplication\": true\n}",
+        "options": {}
+      },
+      "id": "8",
+      "name": "Sync to paniund Wishlist",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 480]
+    }
+  ],
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Fetch Open Tech Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily 8:00 AM Schedule": {
+      "main": [
+        [
+          {
+            "node": "Fetch Open Tech Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Open Tech Jobs": {
+      "main": [
+        [
+          {
+            "node": "Summarize Jobs for AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize Jobs for AI": {
+      "main": [
+        [
+          {
+            "node": "DeepSeek Match Scorer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Match Scorer": {
+      "main": [
+        [
+          {
+            "node": "Format Alerts & Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Alerts & Jobs": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Alert",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sync to paniund Wishlist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

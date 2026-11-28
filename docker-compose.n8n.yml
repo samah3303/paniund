@@ -1,0 +1,28 @@
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    container_name: paniund_n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - NODE_ENV=production
+      - N8N_SECURE_COOKIE=false
+      - GENERIC_TIMEZONE=UTC
+      # Expose host machine so n8n can reach Next.js at http://host.docker.internal:3000
+      - PANIUND_API_URL=${PANIUND_API_URL:-http://host.docker.internal:3000}
+      - PANIUND_API_TOKEN=${PANIUND_API_TOKEN:-}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  n8n_data:
+    driver: local

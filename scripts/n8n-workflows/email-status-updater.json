@@ -1,0 +1,203 @@
+{
+  "name": "paniund - Recruiter Email Status Auto-Updater",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "from",
+              "value": "recruiting@stripe.com"
+            },
+            {
+              "name": "subject",
+              "value": "Invitation to interview: Fullstack Engineer at Stripe"
+            },
+            {
+              "name": "body",
+              "value": "Hi Alex,\n\nThank you for applying to the Fullstack Engineer position at Stripe. We were very impressed with your background and would like to invite you for a 45-minute technical screen on December 5th, 2026 at 2:00 PM UTC.\n\nPlease confirm if this time works for you.\n\nBest regards,\nStripe Recruiting Team"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2",
+      "name": "Mock Email Sample",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.deepseek.com/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.DEEPSEEK_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"deepseek-chat\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an AI assistant specialized in analyzing recruiter and job application emails. Extract structured details in pure JSON (no markdown formatting, no code fences):\\n{\\n  \\\"isJobEmail\\\": boolean,\\n  \\\"company\\\": string,\\n  \\\"jobTitle\\\": string | null,\\n  \\\"status\\\": \\\"applied\\\" | \\\"interview\\\" | \\\"rejected\\\" | \\\"offer\\\",\\n  \\\"interviewDate\\\": string | null (ISO 8601 if mentioned, otherwise null),\\n  \\\"summary\\\": string (1-2 sentences)\\n}\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"From: {{ $json.from }}\\nSubject: {{ $json.subject }}\\nBody: {{ $json.body }}\"\n    }\n  ],\n  \"temperature\": 0.1\n}",
+        "options": {}
+      },
+      "id": "3",
+      "name": "DeepSeek Email Classifier",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse DeepSeek response and clean JSON\nconst responseText = $input.item.json.choices[0].message.content;\nlet cleanJson = responseText.trim();\n\n// Strip markdown code fences if present\nconst fenceMatch = cleanJson.match(/```(?:json)?\\s*([\\s\\S]*?)```/);\nif (fenceMatch) {\n  cleanJson = fenceMatch[1].trim();\n}\n\ntry {\n  const parsed = JSON.parse(cleanJson);\n  return [{ json: parsed }];\n} catch (e) {\n  return [{\n    json: {\n      isJobEmail: false,\n      error: \"JSON parse error\",\n      raw: responseText\n    }\n  }];\n}"
+      },
+      "id": "4",
+      "name": "Parse & Sanitize AI Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.isJobEmail }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "c2",
+              "leftValue": "={{ $json.company }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5",
+      "name": "Is Valid Job Email?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.PANIUND_API_URL }}/api/webhooks/n8n",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.PANIUND_API_TOKEN }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event\": \"application.status_update\",\n  \"company\": \"{{ $json.company }}\",\n  \"jobTitle\": \"{{ $json.jobTitle || '' }}\",\n  \"status\": \"{{ $json.status }}\",\n  \"interviewDate\": {{ $json.interviewDate ? '\"' + $json.interviewDate + '\"' : 'null' }},\n  \"notes\": \"{{ $json.summary }}\"\n}",
+        "options": {}
+      },
+      "id": "6",
+      "name": "Update paniund Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1360, 200]
+    }
+  ],
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Mock Email Sample",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mock Email Sample": {
+      "main": [
+        [
+          {
+            "node": "DeepSeek Email Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Email Classifier": {
+      "main": [
+        [
+          {
+            "node": "Parse & Sanitize AI Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse & Sanitize AI Output": {
+      "main": [
+        [
+          {
+            "node": "Is Valid Job Email?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Valid Job Email?": {
+      "main": [
+        [
+          {
+            "node": "Update paniund Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
